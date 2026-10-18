@@ -1,0 +1,482 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0E0E0E">
+<meta name="robots" content="noindex">
+<title>新人研修 振り返りアンケート｜ROYAL</title>
+<link rel="icon" href="assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0E0E0E; --bg2:#161616; --card:#1B1B1B; --card2:#222; --line:#2E2E2E; --line2:#3A3A3A;
+  --y:#F2D21D; --y2:#FFE24A; --ydim:rgba(242,210,29,.12);
+  --ink:#FFFFFF; --soft:#D9D4C3; --mute:#A39E8E; --faint:#6E6A60; --err:#FF7A59;
+  --r:14px; --ease:cubic-bezier(.2,.7,.2,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--ink);font-family:"Noto Sans JP",system-ui,sans-serif;line-height:1.7;
+  font-feature-settings:"palt" 1;min-height:100vh;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(900px 500px at 85% -10%,rgba(242,210,29,.10),transparent 60%),
+             radial-gradient(700px 400px at -10% 110%,rgba(242,210,29,.06),transparent 60%)}
+button,input,textarea{font:inherit;color:inherit}
+.wrap{position:relative;z-index:1;max-width:720px;margin:0 auto;padding:0 16px 120px}
+
+/* top bar */
+.bar{position:sticky;top:0;z-index:10;background:rgba(14,14,14,.86);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line)}
+.bar-in{max-width:720px;margin:0 auto;padding:12px 16px;display:flex;align-items:center;gap:12px}
+.bar img{width:30px;height:30px}
+.bar .brand{font-family:Oswald,sans-serif;font-weight:700;letter-spacing:.18em;font-size:13px;color:var(--y)}
+.bar .stepno{margin-left:auto;font-family:Oswald,sans-serif;font-size:13px;letter-spacing:.1em;color:var(--mute)}
+.bar .stepno b{color:var(--ink);font-weight:500}
+.prog{height:3px;background:var(--line)}
+.prog i{display:block;height:100%;width:0;background:var(--y);transition:width .5s var(--ease)}
+
+/* hero */
+.hero{padding:56px 0 28px;position:relative}
+.hero .logo{width:120px;height:auto;display:block;margin-bottom:28px;filter:drop-shadow(0 6px 24px rgba(242,210,29,.18))}
+.kicker{font-family:Oswald,sans-serif;font-weight:500;letter-spacing:.24em;font-size:12px;color:var(--y);text-transform:uppercase}
+.hero h1{font-size:clamp(30px,8vw,46px);font-weight:900;line-height:1.25;margin:10px 0 16px;letter-spacing:.01em}
+.hero h1 span{color:var(--y)}
+.hero p{color:var(--soft);font-size:15px}
+.meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+.meta span{border:1px solid var(--line2);border-radius:999px;padding:4px 12px;font-size:12px;color:var(--soft)}
+.rule{width:56px;height:4px;background:var(--y);margin:26px 0 0;border-radius:2px}
+.testmode{margin-top:18px;border:1px dashed var(--err);color:var(--err);border-radius:10px;padding:8px 12px;font-size:12px}
+
+/* steps */
+.step{display:none;animation:in .45s var(--ease)}
+.step.on{display:block}
+@keyframes in{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.sec-head{display:flex;align-items:flex-end;gap:14px;margin:34px 0 18px}
+.sec-head .num{font-family:Oswald,sans-serif;font-weight:700;font-size:56px;line-height:.85;color:var(--y)}
+.sec-head h2{font-size:22px;font-weight:900;line-height:1.35}
+.sec-head h2 small{display:block;font-size:12px;font-weight:500;color:var(--mute);letter-spacing:.06em}
+
+.q{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:20px 18px;margin-bottom:14px;transition:border-color .2s}
+.q.err{border-color:var(--err)}
+.q-label{display:flex;align-items:center;gap:8px;font-weight:700;font-size:16px;margin-bottom:4px}
+.tag{font-size:10.5px;font-weight:700;letter-spacing:.06em;border-radius:4px;padding:1px 7px;flex:none}
+.tag.req{background:var(--y);color:#111}
+.tag.opt{border:1px solid var(--line2);color:var(--mute)}
+.q-help{font-size:12.5px;color:var(--mute);margin-bottom:12px}
+.q-err{display:none;color:var(--err);font-size:12.5px;margin-top:10px}
+.q.err .q-err{display:block}
+
+input[type=text],textarea{width:100%;background:var(--bg2);border:1px solid var(--line2);border-radius:10px;padding:13px 14px;font-size:16px;
+  outline:none;transition:border-color .2s,box-shadow .2s;resize:vertical}
+textarea{min-height:120px;line-height:1.7}
+input[type=text]:focus,textarea:focus{border-color:var(--y);box-shadow:0 0 0 3px var(--ydim)}
+::placeholder{color:var(--faint)}
+.count{text-align:right;font-size:11px;color:var(--faint);margin-top:6px;font-family:Oswald,sans-serif;letter-spacing:.06em}
+
+/* choices */
+.opts{display:grid;gap:8px}
+.opts.cols2{grid-template-columns:1fr 1fr}
+.opts.cols3{grid-template-columns:repeat(3,1fr)}
+@media(min-width:560px){.opts.list{grid-template-columns:1fr 1fr}.opts.cols3{grid-template-columns:repeat(6,1fr)}}
+.opt{position:relative}
+.opt input{position:absolute;opacity:0;pointer-events:none}
+.opt label{display:flex;align-items:center;gap:12px;min-height:52px;padding:10px 14px;background:var(--bg2);border:1px solid var(--line2);
+  border-radius:10px;cursor:pointer;font-weight:500;font-size:15px;line-height:1.4;transition:all .18s var(--ease);user-select:none;-webkit-tap-highlight-color:transparent}
+.opt label:hover{border-color:#555}
+.opt .mk{flex:none;width:20px;height:20px;border:2px solid var(--faint);border-radius:50%;display:grid;place-items:center;transition:all .18s}
+.opt.check .mk{border-radius:5px}
+.opt .mk::after{content:"";width:8px;height:8px;border-radius:50%;background:#111;transform:scale(0);transition:transform .18s var(--ease)}
+.opt.check .mk::after{width:10px;height:6px;border-radius:0;background:none;border-left:2.5px solid #111;border-bottom:2.5px solid #111;transform:rotate(-45deg) scale(0);margin-top:-2px}
+.opt input:checked + label{border-color:var(--y);background:var(--ydim);color:#fff}
+.opt input:checked + label .mk{border-color:var(--y);background:var(--y)}
+.opt input:checked + label .mk::after{transform:scale(1)}
+.opt.check input:checked + label .mk::after{transform:rotate(-45deg) scale(1)}
+.opt input:focus-visible + label{box-shadow:0 0 0 3px var(--ydim);border-color:var(--y)}
+.opt input:disabled + label{opacity:.38;cursor:not-allowed}
+.opt .no{font-family:Oswald,sans-serif;font-size:13px;color:var(--faint);width:20px;flex:none}
+.opt input:checked + label .no{color:var(--y)}
+.opt .badge{margin-left:auto;font-size:10.5px;color:var(--y);border:1px solid var(--y);border-radius:4px;padding:0 6px;white-space:nowrap}
+.pill label{justify-content:center;min-height:46px;font-family:Oswald,"Noto Sans JP",sans-serif;letter-spacing:.06em}
+.pill .mk{display:none}
+.other-in{margin-top:10px;display:none}
+.other-in.on{display:block}
+.mini{display:flex;justify-content:flex-end;margin-top:10px}
+.linkbtn{background:none;border:none;color:var(--y);font-size:13px;cursor:pointer;padding:4px 0;text-decoration:underline;text-underline-offset:3px}
+.reveal{display:none}.reveal.on{display:block;animation:in .35s var(--ease)}
+
+/* nav */
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:10;background:linear-gradient(to top,rgba(14,14,14,1) 55%,rgba(14,14,14,0));
+  padding:22px 16px calc(16px + env(safe-area-inset-bottom))}
+.nav-in{max-width:720px;margin:0 auto;display:flex;gap:10px}
+.btn{border:none;border-radius:12px;height:54px;padding:0 22px;font-weight:700;font-size:16px;cursor:pointer;transition:transform .12s,background .2s,opacity .2s;
+  display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.btn:active{transform:scale(.98)}
+.btn.pri{flex:1;background:var(--y);color:#111}
+.btn.pri:hover{background:var(--y2)}
+.btn.sec{background:var(--card2);color:var(--soft);border:1px solid var(--line2)}
+.btn[disabled]{opacity:.5;cursor:wait}
+.btn .arr{font-family:Oswald,sans-serif}
+.spin{width:18px;height:18px;border:2.5px solid rgba(0,0,0,.25);border-top-color:#111;border-radius:50%;animation:sp .8s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+/* review */
+.review{border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.rv{display:grid;grid-template-columns:1fr auto;gap:4px 12px;padding:14px 16px;border-bottom:1px solid var(--line);background:var(--card)}
+.rv:last-child{border-bottom:none}
+.rv dt{font-size:12px;color:var(--mute);font-weight:700}
+.rv dd{grid-column:1/2;font-size:14.5px;white-space:pre-wrap;word-break:break-word}
+.rv dd.empty{color:var(--faint)}
+.rv .linkbtn{grid-row:1/3;grid-column:2;align-self:center;font-size:12px}
+.note{font-size:12.5px;color:var(--mute);margin-top:14px}
+.senderr{display:none;margin-top:14px;border:1px solid var(--err);color:var(--err);border-radius:10px;padding:12px 14px;font-size:13.5px}
+.senderr.on{display:block}
+
+/* done */
+.done{min-height:calc(100vh - 60px);display:none;flex-direction:column;justify-content:center;padding:40px 0 60px;animation:in .6s var(--ease)}
+.done.on{display:flex}
+.done img{width:140px;margin-bottom:30px}
+.done .big{font-family:Oswald,sans-serif;font-weight:700;font-size:clamp(48px,14vw,84px);line-height:1;color:var(--y);letter-spacing:.02em}
+.done h2{font-size:24px;font-weight:900;margin:18px 0 10px;line-height:1.45}
+.done p{color:var(--soft)}
+.done .rule{margin-top:28px}
+.foot{text-align:center;font-family:Oswald,sans-serif;font-size:11px;letter-spacing:.2em;color:var(--faint);padding:30px 0 0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+</style>
+</head>
+<body>
+<div class="bar" id="bar">
+  <div class="bar-in">
+    <img src="assets/royal_logo.png" alt="ROYAL">
+    <span class="brand">ROYAL</span>
+    <span class="stepno" id="stepno"><b>01</b> / 05</span>
+  </div>
+  <div class="prog"><i id="prog"></i></div>
+</div>
+
+<main class="wrap">
+<form id="f" novalidate>
+
+<!-- ============ STEP 1 ============ -->
+<section class="step on" data-step="1">
+  <header class="hero">
+    <img class="logo" src="assets/royal_logo.png" alt="ROYAL">
+    <div class="kicker">ROYAL ／ New Member Training</div>
+    <h1>新人研修 4日間の<br><span>振り返り</span>アンケート</h1>
+    <p>4日間、本当におつかれさまでした。<br>次の新人研修をもっと良くするために、正直な声を聞かせてください。</p>
+    <div class="meta"><span>所要 約5分</span><span>全5ステップ</span><span>途中の入力は自動で保存</span></div>
+    <div class="rule"></div>
+    <div class="testmode" id="testmode" hidden>テストモード：送信先が未設定のため、送信しても回答は保存されません。</div>
+  </header>
+
+  <div class="sec-head"><span class="num">01</span><h2><small>ABOUT YOU</small>あなたについて</h2></div>
+
+  <div class="q" data-q="name">
+    <div class="q-label"><span class="tag req">必須</span>名前</div>
+    <div class="q-help">フルネームで入力してください</div>
+    <input type="text" name="name" id="name" autocomplete="name" maxlength="40" placeholder="例：山田 太郎">
+    <div class="q-err">名前を入力してください</div>
+  </div>
+
+  <div class="q" data-q="company">
+    <div class="q-label"><span class="tag req">必須</span>所属会社</div>
+    <div class="q-help">1つ選んでください</div>
+    <div class="opts cols2" id="companyOpts"></div>
+    <div class="other-in" id="companyOtherWrap">
+      <input type="text" name="companyOther" id="companyOther" maxlength="40" placeholder="会社名を入力">
+    </div>
+    <div class="q-err" id="companyErr">所属会社を選んでください</div>
+  </div>
+
+  <div class="q" data-q="days">
+    <div class="q-label"><span class="tag req">必須</span>参加した研修</div>
+    <div class="q-help">参加した日をすべて選んでください</div>
+    <div class="opts cols2" id="dayOpts"></div>
+    <div class="mini"><button type="button" class="linkbtn" id="allDays">4日間すべて参加した</button></div>
+    <div class="q-err">参加した日を選んでください</div>
+  </div>
+</section>
+
+<!-- ============ STEP 2 ============ -->
+<section class="step" data-step="2">
+  <div class="sec-head"><span class="num">02</span><h2><small>BEST SESSION</small>一番印象に残った研修</h2></div>
+
+  <div class="q" data-q="best">
+    <div class="q-label"><span class="tag req">必須</span>一番印象に残った研修は？</div>
+    <div class="q-help">1つだけ選んでください</div>
+    <div class="opts list" id="bestOpts"></div>
+    <div class="q-err">1つ選んでください</div>
+  </div>
+
+  <div class="q" data-q="bestReason">
+    <div class="q-label"><span class="tag req">必須</span>その理由</div>
+    <div class="q-help">どんな場面や言葉が残っているか、具体的に書いてもらえるとうれしいです</div>
+    <textarea name="bestReason" id="bestReason" maxlength="1000" placeholder="例：〇〇のワークで、△△に気づけたから"></textarea>
+    <div class="count"><span data-count="bestReason">0</span> / 1000</div>
+    <div class="q-err">理由を入力してください</div>
+  </div>
+</section>
+
+<!-- ============ STEP 3 ============ -->
+<section class="step" data-step="3">
+  <div class="sec-head"><span class="num">03</span><h2><small>MORE SESSIONS</small>その他に印象に残った研修</h2></div>
+
+  <div class="q" data-q="others">
+    <div class="q-label"><span class="tag opt">任意</span>ほかにも印象に残った研修</div>
+    <div class="q-help">あればでOKです。いくつでも選べます</div>
+    <div class="opts list" id="otherOpts"></div>
+  </div>
+
+  <div class="reveal" id="othersReasonWrap">
+    <div class="q" data-q="othersReason">
+      <div class="q-label"><span class="tag req">必須</span>その理由</div>
+      <div class="q-help">上で選んだ研修について、印象に残った理由を教えてください</div>
+      <textarea name="othersReason" id="othersReason" maxlength="1000" placeholder="例：〇〇研修は、△△が現場ですぐ使えそうだと思った"></textarea>
+      <div class="count"><span data-count="othersReason">0</span> / 1000</div>
+      <div class="q-err">理由を入力してください</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ STEP 4 ============ -->
+<section class="step" data-step="4">
+  <div class="sec-head"><span class="num">04</span><h2><small>4 DAYS</small>4日間を通して</h2></div>
+
+  <div class="q" data-q="impression">
+    <div class="q-label"><span class="tag req">必須</span>4日間を通しての感想</div>
+    <div class="q-help">研修前の自分と比べて変わったこと、これから現場でやりたいことなど、自由に書いてください</div>
+    <textarea name="impression" id="impression" maxlength="2000" placeholder="自由に書いてください"></textarea>
+    <div class="count"><span data-count="impression">0</span> / 2000</div>
+    <div class="q-err">感想を入力してください</div>
+  </div>
+
+  <div class="q" data-q="idea">
+    <div class="q-label"><span class="tag opt">任意</span>「こんな研修あったらいいな」</div>
+    <div class="q-help">次の新人研修に参加する人に向けて、ナイスアイデアがあればください！</div>
+    <textarea name="idea" id="idea" maxlength="1000" placeholder="例：先輩の1日に密着する研修があったらいい"></textarea>
+    <div class="count"><span data-count="idea">0</span> / 1000</div>
+  </div>
+</section>
+
+<!-- ============ STEP 5 ============ -->
+<section class="step" data-step="5">
+  <div class="sec-head"><span class="num">05</span><h2><small>CONFIRM</small>回答の確認</h2></div>
+  <dl class="review" id="review"></dl>
+  <p class="note">内容を確認して「送信する」を押してください。送信後の修正はできません。</p>
+  <div class="senderr" id="senderr">送信できませんでした。通信環境を確認して、もう一度「送信する」を押してください。入力内容は残っています。</div>
+</section>
+
+</form>
+
+<!-- ============ DONE ============ -->
+<section class="done" id="done">
+  <img src="assets/royal_logo.png" alt="ROYAL">
+  <div class="big">THANK YOU.</div>
+  <h2>4日間、おつかれさまでした。<br>ここからが本番。</h2>
+  <p>回答はしっかり読んで、次の新人研修に活かします。<br>現場での活躍を、楽しみにしています。</p>
+  <div class="rule"></div>
+</section>
+
+<div class="foot">ROYAL NEW MEMBER TRAINING</div>
+</main>
+
+<nav class="nav" id="nav">
+  <div class="nav-in">
+    <button type="button" class="btn sec" id="back" hidden>戻る</button>
+    <button type="button" class="btn pri" id="next">次へ <span class="arr">→</span></button>
+  </div>
+</nav>
+
+<script src="config.js"></script>
+<script>
+(() => {
+  const SESSIONS = ["商材説明","金融","結果の出る新人のスタンス","具体と抽象","チームビルディング","ロジカルシンキング","鬼速PDCA","データ分析","タスクジュール","世界基準の部下の育て方","1on1研修"];
+  const COMPANIES = ["＆Y","Réveal","ONE","NALU","ロイヤル","その他"];
+  const DAYS = ["Day1","Day2","Day3","Day4"];
+  const TOTAL = 5, KEY = "royal-survey-draft-v1";
+  const endpoint = ((window.SURVEY_CONFIG || {}).endpoint || "").trim();
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const esc = (s) => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+  if (!endpoint) $("#testmode").hidden = false;
+
+  // ---- build options
+  function opt(container, { type, name, value, label, no, cls = "" }) {
+    const id = `${name}-${value}`.replace(/[^\w-]/g, m => m.charCodeAt(0).toString(36));
+    const wrap = document.createElement("div");
+    wrap.className = `opt ${type === "checkbox" ? "check" : ""} ${cls}`;
+    wrap.innerHTML = `<input type="${type}" name="${name}" id="${id}" value="${esc(value)}">
+      <label for="${id}"><span class="mk"></span>${no ? `<span class="no">${no}</span>` : ""}<span class="tx">${esc(label)}</span></label>`;
+    container.appendChild(wrap);
+  }
+  COMPANIES.forEach(c => opt($("#companyOpts"), { type: "radio", name: "company", value: c, label: c }));
+  DAYS.forEach(d => opt($("#dayOpts"), { type: "checkbox", name: "days", value: d, label: d.replace("Day", "DAY "), cls: "pill" }));
+  SESSIONS.forEach((s, i) => opt($("#bestOpts"), { type: "radio", name: "best", value: s, label: s, no: String(i + 1).padStart(2, "0") }));
+  SESSIONS.forEach((s, i) => opt($("#otherOpts"), { type: "checkbox", name: "others", value: s, label: s, no: String(i + 1).padStart(2, "0") }));
+
+  // ---- state helpers
+  const f = $("#f");
+  const val = (n) => (f.elements[n] && f.elements[n].value || "").trim();
+  const checked = (n) => $$(`input[name="${n}"]:checked`).map(i => i.value);
+  const collect = () => ({
+    name: val("name"),
+    company: (checked("company")[0] || ""),
+    companyOther: val("companyOther"),
+    days: checked("days"),
+    best: checked("best")[0] || "",
+    bestReason: val("bestReason"),
+    others: checked("others"),
+    othersReason: val("othersReason"),
+    impression: val("impression"),
+    idea: val("idea"),
+  });
+
+  function save() { try { localStorage.setItem(KEY, JSON.stringify({ d: collect(), step })); } catch (e) {} }
+  function restore() {
+    let s; try { s = JSON.parse(localStorage.getItem(KEY) || "null"); } catch (e) { s = null; }
+    if (!s || !s.d) return 1;
+    const d = s.d;
+    ["name","companyOther","bestReason","othersReason","impression","idea"].forEach(k => { if (d[k]) f.elements[k].value = d[k]; });
+    const set = (n, vals) => $$(`input[name="${n}"]`).forEach(i => { i.checked = vals.includes(i.value); });
+    set("company", [d.company]); set("days", d.days || []); set("best", [d.best]); set("others", d.others || []);
+    return Math.min(Math.max(1, s.step || 1), TOTAL);
+  }
+
+  // ---- dynamic UI
+  function syncCompany() {
+    const on = checked("company")[0] === "その他";
+    $("#companyOtherWrap").classList.toggle("on", on);
+  }
+  function syncOthers() {
+    const best = checked("best")[0];
+    $$('input[name="others"]').forEach(i => {
+      const lab = i.nextElementSibling, isBest = i.value === best;
+      i.disabled = isBest; if (isBest) i.checked = false;
+      let b = lab.querySelector(".badge");
+      if (isBest && !b) { b = document.createElement("span"); b.className = "badge"; b.textContent = "1位に選択中"; lab.appendChild(b); }
+      if (!isBest && b) b.remove();
+    });
+    $("#othersReasonWrap").classList.toggle("on", checked("others").length > 0);
+  }
+  function syncCounts() { $$("[data-count]").forEach(el => { el.textContent = (f.elements[el.dataset.count].value || "").length; }); }
+
+  $("#allDays").addEventListener("click", () => {
+    const all = $$('input[name="days"]'); const every = all.every(i => i.checked);
+    all.forEach(i => i.checked = !every); clearErr("days"); save();
+  });
+  f.addEventListener("input", (e) => {
+    const q = e.target.closest(".q"); if (q) q.classList.remove("err");
+    if (e.target.name === "company") syncCompany();
+    if (e.target.name === "best" || e.target.name === "others") syncOthers();
+    syncCounts(); save();
+  });
+  f.addEventListener("submit", e => e.preventDefault());
+
+  // ---- validation
+  function setErr(q, msg) { const el = $(`.q[data-q="${q}"]`); el.classList.add("err"); if (msg) { const m = el.querySelector(".q-err"); if (m) m.textContent = msg; } return el; }
+  function clearErr(q) { const el = $(`.q[data-q="${q}"]`); if (el) el.classList.remove("err"); }
+  function validate(n) {
+    const d = collect(), bad = [];
+    if (n === 1) {
+      if (!d.name) bad.push(setErr("name"));
+      if (!d.company) bad.push(setErr("company", "所属会社を選んでください"));
+      else if (d.company === "その他" && !d.companyOther) bad.push(setErr("company", "会社名を入力してください"));
+      if (!d.days.length) bad.push(setErr("days"));
+    }
+    if (n === 2) {
+      if (!d.best) bad.push(setErr("best"));
+      if (!d.bestReason) bad.push(setErr("bestReason"));
+    }
+    if (n === 3 && d.others.length && !d.othersReason) bad.push(setErr("othersReason"));
+    if (n === 4 && !d.impression) bad.push(setErr("impression"));
+    if (bad.length) {
+      bad[0].scrollIntoView({ behavior: "smooth", block: "center" });
+      const focusable = bad[0].querySelector("input:not([type=radio]):not([type=checkbox]),textarea,input");
+      if (focusable) setTimeout(() => focusable.focus({ preventScroll: true }), 350);
+      if (navigator.vibrate) navigator.vibrate(30);
+    }
+    return !bad.length;
+  }
+
+  // ---- review
+  function review() {
+    const d = collect();
+    const comp = d.company === "その他" ? `その他（${d.companyOther}）` : d.company;
+    const rows = [
+      ["名前", d.name, 1], ["所属会社", comp, 1], ["参加した研修", d.days.join("、"), 1],
+      ["一番印象に残った研修", d.best, 2], ["その理由", d.bestReason, 2],
+      ["その他印象に残った研修", d.others.join("、"), 3], ["その理由", d.others.length ? d.othersReason : "", 3],
+      ["4日間を通しての感想", d.impression, 4], ["こんな研修あったらいいな", d.idea, 4],
+    ];
+    $("#review").innerHTML = rows.map(([k, v, s]) => `<div class="rv"><dt>${k}</dt><dd class="${v ? "" : "empty"}">${v ? esc(v) : "（なし）"}</dd><button type="button" class="linkbtn" data-go="${s}">修正</button></div>`).join("");
+  }
+  $("#review").addEventListener("click", e => { const b = e.target.closest("[data-go]"); if (b) go(+b.dataset.go); });
+
+  // ---- navigation
+  let step = 1, sending = false;
+  function go(n) {
+    step = n;
+    $$(".step").forEach(s => s.classList.toggle("on", +s.dataset.step === n));
+    $("#stepno").innerHTML = `<b>${String(n).padStart(2, "0")}</b> / ${String(TOTAL).padStart(2, "0")}`;
+    $("#prog").style.width = `${(n - 1) / (TOTAL - 1) * 100}%`;
+    $("#back").hidden = n === 1;
+    $("#next").innerHTML = n === TOTAL ? "送信する" : n === TOTAL - 1 ? `確認へ <span class="arr">→</span>` : `次へ <span class="arr">→</span>`;
+    $("#senderr").classList.remove("on");
+    if (n === TOTAL) review();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    save();
+  }
+  $("#back").addEventListener("click", () => go(Math.max(1, step - 1)));
+  $("#next").addEventListener("click", () => {
+    if (step < TOTAL) { if (validate(step)) go(step + 1); return; }
+    submit();
+  });
+
+  // ---- submit
+  function sid() {
+    try { let id = localStorage.getItem(KEY + "-id"); if (!id) { id = (crypto.randomUUID ? crypto.randomUUID() : Date.now() + "-" + Math.random().toString(36).slice(2)); localStorage.setItem(KEY + "-id", id); } return id; }
+    catch (e) { return Date.now() + "-" + Math.random().toString(36).slice(2); }
+  }
+  async function submit() {
+    if (sending) return;
+    for (let i = 1; i < TOTAL; i++) if (!validate(i)) { go(i); setTimeout(() => validate(i), 50); return; }
+    sending = true;
+    const btn = $("#next"); btn.disabled = true; btn.innerHTML = `<span class="spin"></span>送信中…`;
+    const d = collect();
+    const payload = { id: sid(), ...d, company: d.company === "その他" ? `その他（${d.companyOther}）` : d.company, ua: navigator.userAgent.slice(0, 200) };
+    delete payload.companyOther;
+    if (!d.others.length) payload.othersReason = "";
+    try {
+      if (endpoint) {
+        const body = JSON.stringify(payload);
+        try {
+          const res = await fetch(endpoint, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body });
+          const j = await res.json().catch(() => ({ ok: res.ok }));
+          if (!j.ok) throw new Error(j.error || "failed");
+        } catch (e) {
+          if (e instanceof TypeError) { await fetch(endpoint, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain;charset=utf-8" }, body }); }
+          else throw e;
+        }
+      } else {
+        await new Promise(r => setTimeout(r, 700));
+        console.info("[テストモード] 送信内容", payload);
+      }
+      try { localStorage.removeItem(KEY); localStorage.removeItem(KEY + "-id"); } catch (e) {}
+      $("#f").hidden = true; $("#nav").hidden = true; $("#bar").querySelector(".stepno").textContent = "COMPLETE";
+      $("#prog").style.width = "100%"; $("#done").classList.add("on"); window.scrollTo({ top: 0 });
+    } catch (e) {
+      $("#senderr").classList.add("on");
+      btn.disabled = false; btn.textContent = "送信する"; sending = false;
+    }
+  }
+
+  // ---- init
+  const start = restore();
+  syncCompany(); syncOthers(); syncCounts(); go(start);
+})();
+</script>
+</body>
+</html>
