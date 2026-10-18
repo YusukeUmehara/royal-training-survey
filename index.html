@@ -452,15 +452,10 @@ input[type=text]:focus,textarea:focus{border-color:var(--y);box-shadow:0 0 0 3px
     if (!d.others.length) payload.othersReason = "";
     try {
       if (endpoint) {
+        // Apps Script はリダイレクトを挟むため、応答は読まずに送る（回答IDで二重登録は防止）
         const body = JSON.stringify(payload);
-        try {
-          const res = await fetch(endpoint, { method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" }, body });
-          const j = await res.json().catch(() => ({ ok: res.ok }));
-          if (!j.ok) throw new Error(j.error || "failed");
-        } catch (e) {
-          if (e instanceof TypeError) { await fetch(endpoint, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain;charset=utf-8" }, body }); }
-          else throw e;
-        }
+        const send = () => fetch(endpoint, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain;charset=utf-8" }, body });
+        try { await send(); } catch (e) { await new Promise(r => setTimeout(r, 1500)); await send(); }
       } else {
         await new Promise(r => setTimeout(r, 700));
         console.info("[テストモード] 送信内容", payload);
