@@ -1,3 +1,4 @@
+/** @OnlyCurrentDoc */
 /**
  * ROYAL 新人研修 振り返りアンケート — 回答受け取り用（Google Apps Script）
  * 回答用スプレッドシートの「拡張機能 → Apps Script」に貼り付けて、ウェブアプリとしてデプロイします。
