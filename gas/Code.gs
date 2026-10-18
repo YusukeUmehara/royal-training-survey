@@ -63,6 +63,7 @@ function doGet() {
 /** 初回だけ手動で実行：シート名・見出し・書式を整えます（承認画面が出たら許可） */
 function setup() {
   const sh = getSheet_();
+  SpreadsheetApp.getActiveSpreadsheet().setSpreadsheetTimeZone('Asia/Tokyo');
   sh.getRange(1, 1, 1, HEADERS.length).setValues([HEADERS])
     .setFontWeight('bold').setBackground('#1A1A1A').setFontColor('#F2D21D');
   sh.setFrozenRows(1);
